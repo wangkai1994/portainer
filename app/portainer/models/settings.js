@@ -1,4 +1,4 @@
-function SettingsViewModel(data) {
+export function SettingsViewModel(data) {
   this.LogoURL = data.LogoURL;
   this.BlackListedLabels = data.BlackListedLabels;
   this.AuthenticationMethod = data.AuthenticationMethod;
@@ -11,7 +11,7 @@ function SettingsViewModel(data) {
   this.EnableHostManagementFeatures = data.EnableHostManagementFeatures;
 }
 
-function LDAPSettingsViewModel(data) {
+export function LDAPSettingsViewModel(data) {
   this.ReaderDN = data.ReaderDN;
   this.Password = data.Password;
   this.URL = data.URL;
@@ -20,13 +20,13 @@ function LDAPSettingsViewModel(data) {
   this.AutoCreateUsers = data.AutoCreateUsers;
 }
 
-function LDAPSearchSettings(BaseDN, UsernameAttribute, Filter) {
+export function LDAPSearchSettings(BaseDN, UsernameAttribute, Filter) {
   this.BaseDN = BaseDN;
   this.UsernameAttribute = UsernameAttribute;
   this.Filter = Filter;
 }
 
-function LDAPGroupSearchSettings(GroupBaseDN, GroupAttribute, GroupFilter) {
+export function LDAPGroupSearchSettings(GroupBaseDN, GroupAttribute, GroupFilter) {
   this.GroupBaseDN = GroupBaseDN;
   this.GroupAttribute = GroupAttribute;
   this.GroupFilter = GroupFilter;

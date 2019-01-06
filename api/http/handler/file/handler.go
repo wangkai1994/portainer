@@ -39,7 +39,7 @@ func (handler *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("X-XSS-Protection", "1; mode=block")
 	w.Header().Add("X-Content-Type-Options", "nosniff")
 
-	if strings.HasPrefix(r.URL.Path, "/assets/") {
+	if strings.HasPrefix(r.URL.Path, "/assets/") || strings.HasSuffix(r.URL.Path, ".css") || strings.HasSuffix(r.URL.Path, ".js") {
 		handler.Handler.ServeHTTP(w, r)
 	} else {
 		http.ServeFile(w, r, filepath.Join(handler.assetPublicPath, "index.html"))

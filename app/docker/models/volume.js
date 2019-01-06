@@ -1,4 +1,6 @@
-function VolumeViewModel(data) {
+import { ResourceControlViewModel } from "../../portainer/models/resourceControl";
+
+export function VolumeViewModel(data) {
   this.Id = data.Name;
   this.Driver = data.Driver;
   this.Options = data.Options;

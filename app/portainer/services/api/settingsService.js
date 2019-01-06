@@ -1,3 +1,5 @@
+import { SettingsViewModel } from "../../models/settings";
+
 angular.module('portainer.app')
 .factory('SettingsService', ['$q', 'Settings', function SettingsServiceFactory($q, Settings) {
   'use strict';

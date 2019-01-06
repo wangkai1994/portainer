@@ -542,12 +542,13 @@ function ($q, $scope, $transition$, $state, $location, $timeout, $anchorScroll, 
     });
   }
 
-  $scope.updateServiceAttribute = function updateServiceAttribute(service, name) {
+  $scope.updateServiceAttribute = updateServiceAttribute;
+  function updateServiceAttribute(service, name) {
     if (service[name] !== originalService[name] || !(name in originalService)) {
       service.hasChanges = true;
     }
     previousServiceValues.push(name);
-  };
+  }
 
   function updateServiceArray(service, name) {
     previousServiceValues.push(name);
