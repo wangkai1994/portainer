@@ -6,16 +6,31 @@ function ($transition$, $scope, RegistryService, RegistryV2Service, Notification
     displayInvalidConfigurationMessage: false
   };
 
-  function initView() {
-    var registryId = $transition$.params().id;
 
-    RegistryService.registry(registryId)
+  $scope.paginationAction = function (repositories) {
+    RegistryV2Service.getRepositoriesDetails($scope.state.registryId, repositories)
+    .then(function success(data) {
+      for (var i = 0; i < data.length; i++) {
+        var idx = _.findIndex($scope.repositories, {'Name': data[i].Name});
+        if (idx !== -1) {
+          $scope.repositories[idx].TagsCount = data[i].TagsCount;
+        }
+      }
+    }).catch(function error(err) {
+      Notifications.error('Failure', err, 'Unable to retrieve repositories details');
+    });
+  };
+
+  function initView() {
+    $scope.state.registryId = $transition$.params().id;
+
+    RegistryService.registry($scope.state.registryId)
     .then(function success(data) {
       $scope.registry = data;
 
-      RegistryV2Service.ping(registryId, false)
+      RegistryV2Service.ping($scope.state.registryId, false)
       .then(function success() {
-        return RegistryV2Service.repositories(registryId);
+        return RegistryV2Service.repositories($scope.state.registryId);
       })
       .then(function success(data) {
         $scope.repositories = data;
