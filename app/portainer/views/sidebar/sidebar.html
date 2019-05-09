@@ -3,7 +3,7 @@
   <div class="sidebar-header">
     <a ui-sref="portainer.home">
       <img ng-if="logo" ng-src="{{ logo }}" class="img-responsive logo">
-      <img ng-if="!logo" src="images/logo.png" class="img-responsive logo" alt="Portainer">
+      <img ng-if="!logo" src="../../../../assets/images/logo.png" class="img-responsive logo" alt="Portainer">
     </a>
     <a ng-click="toggleSidebar()"><span class="menu-icon glyphicon glyphicon-transfer"></span></a>
   </div>
@@ -63,7 +63,7 @@
         <a ui-sref="portainer.tags" ui-sref-active="active">Tags</a>
       </div>
     </li>
-    <li class="sidebar-list" ng-if="!applicationState.application.authentication || isAdmin">
+    <li class="sidebar-list" ng-if="applicationState.application.authentication">
       <a ui-sref="portainer.registries" ui-sref-active="active">Registries <span class="menu-icon fa fa-database fa-fw"></span></a>
     </li>
     <li class="sidebar-list" ng-if="!applicationState.application.authentication || isAdmin">
@@ -76,7 +76,7 @@
     </li>
   </ul>
   <div class="sidebar-footer-content">
-    <img src="images/logo_small.png" class="img-responsive logo" alt="Portainer">
+    <img src="../../../../assets/images/logo_small.png" class="img-responsive logo" alt="Portainer">
     <span class="version">{{ uiVersion }}</span>
   </div>
   </div>

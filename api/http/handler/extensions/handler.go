@@ -5,8 +5,8 @@ import (
 
 	"github.com/gorilla/mux"
 	httperror "github.com/portainer/libhttp/error"
-	"github.com/portainer/portainer"
-	"github.com/portainer/portainer/http/security"
+	"github.com/portainer/portainer/api"
+	"github.com/portainer/portainer/api/http/security"
 )
 
 // Handler is the HTTP handler used to handle extension operations.
@@ -23,7 +23,7 @@ func NewHandler(bouncer *security.RequestBouncer) *Handler {
 	}
 
 	h.Handle("/extensions",
-		bouncer.AdministratorAccess(httperror.LoggerHandler(h.extensionList))).Methods(http.MethodGet)
+		bouncer.AuthenticatedAccess(httperror.LoggerHandler(h.extensionList))).Methods(http.MethodGet)
 	h.Handle("/extensions",
 		bouncer.AdministratorAccess(httperror.LoggerHandler(h.extensionCreate))).Methods(http.MethodPost)
 	h.Handle("/extensions/{id}",

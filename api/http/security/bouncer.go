@@ -2,7 +2,7 @@ package security
 
 import (
 	httperror "github.com/portainer/libhttp/error"
-	"github.com/portainer/portainer"
+	"github.com/portainer/portainer/api"
 
 	"net/http"
 	"strings"
@@ -105,6 +105,31 @@ func (bouncer *RequestBouncer) EndpointAccess(r *http.Request, endpoint *portain
 	}
 
 	if !authorizedEndpointAccess(endpoint, group, tokenData.ID, memberships) {
+		return portainer.ErrEndpointAccessDenied
+	}
+
+	return nil
+}
+
+// RegistryAccess retrieves the JWT token from the request context and verifies
+// that the user can access the specified registry.
+// An error is returned when access is denied.
+func (bouncer *RequestBouncer) RegistryAccess(r *http.Request, registry *portainer.Registry) error {
+	tokenData, err := RetrieveTokenData(r)
+	if err != nil {
+		return err
+	}
+
+	if tokenData.Role == portainer.AdministratorRole {
+		return nil
+	}
+
+	memberships, err := bouncer.teamMembershipService.TeamMembershipsByUserID(tokenData.ID)
+	if err != nil {
+		return err
+	}
+
+	if !AuthorizedRegistryAccess(registry, tokenData.ID, memberships) {
 		return portainer.ErrEndpointAccessDenied
 	}
 

@@ -7,7 +7,7 @@ import (
 	httperror "github.com/portainer/libhttp/error"
 	"github.com/portainer/libhttp/request"
 	"github.com/portainer/libhttp/response"
-	"github.com/portainer/portainer"
+	"github.com/portainer/portainer/api"
 )
 
 // GET request on /api/extensions?store=<store>
@@ -42,6 +42,7 @@ func associateExtensionData(definition *portainer.Extension, extensions []portai
 			definition.Enabled = extension.Enabled
 			definition.License.Company = extension.License.Company
 			definition.License.Expiration = extension.License.Expiration
+			definition.License.Valid = extension.License.Valid
 
 			definitionVersion := semver.New(definition.Version)
 			extensionVersion := semver.New(extension.Version)

@@ -2,15 +2,16 @@ package migrator
 
 import (
 	"github.com/boltdb/bolt"
-	"github.com/portainer/portainer"
-	"github.com/portainer/portainer/bolt/endpoint"
-	"github.com/portainer/portainer/bolt/endpointgroup"
-	"github.com/portainer/portainer/bolt/resourcecontrol"
-	"github.com/portainer/portainer/bolt/settings"
-	"github.com/portainer/portainer/bolt/stack"
-	"github.com/portainer/portainer/bolt/template"
-	"github.com/portainer/portainer/bolt/user"
-	"github.com/portainer/portainer/bolt/version"
+	"github.com/portainer/portainer/api"
+	"github.com/portainer/portainer/api/bolt/endpoint"
+	"github.com/portainer/portainer/api/bolt/endpointgroup"
+	"github.com/portainer/portainer/api/bolt/extension"
+	"github.com/portainer/portainer/api/bolt/resourcecontrol"
+	"github.com/portainer/portainer/api/bolt/settings"
+	"github.com/portainer/portainer/api/bolt/stack"
+	"github.com/portainer/portainer/api/bolt/template"
+	"github.com/portainer/portainer/api/bolt/user"
+	"github.com/portainer/portainer/api/bolt/version"
 )
 
 type (
@@ -20,6 +21,7 @@ type (
 		db                     *bolt.DB
 		endpointGroupService   *endpointgroup.Service
 		endpointService        *endpoint.Service
+		extensionService       *extension.Service
 		resourceControlService *resourcecontrol.Service
 		settingsService        *settings.Service
 		stackService           *stack.Service
@@ -35,6 +37,7 @@ type (
 		DatabaseVersion        int
 		EndpointGroupService   *endpointgroup.Service
 		EndpointService        *endpoint.Service
+		ExtensionService       *extension.Service
 		ResourceControlService *resourcecontrol.Service
 		SettingsService        *settings.Service
 		StackService           *stack.Service
@@ -52,6 +55,7 @@ func NewMigrator(parameters *Parameters) *Migrator {
 		currentDBVersion:       parameters.DatabaseVersion,
 		endpointGroupService:   parameters.EndpointGroupService,
 		endpointService:        parameters.EndpointService,
+		extensionService:       parameters.ExtensionService,
 		resourceControlService: parameters.ResourceControlService,
 		settingsService:        parameters.SettingsService,
 		templateService:        parameters.TemplateService,
@@ -205,6 +209,14 @@ func (m *Migrator) Migrate() error {
 
 	if m.currentDBVersion < 16 {
 		err := m.updateSettingsToDBVersion16()
+		if err != nil {
+			return err
+		}
+	}
+
+	// Portainer 1.20.1
+	if m.currentDBVersion < 17 {
+		err := m.updateExtensionsToDBVersion17()
 		if err != nil {
 			return err
 		}

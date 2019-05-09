@@ -1,4 +1,4 @@
-package main // import "github.com/portainer/portainer"
+package main
 
 import (
 	"encoding/json"
@@ -6,20 +6,20 @@ import (
 	"strings"
 	"time"
 
-	"github.com/portainer/portainer"
-	"github.com/portainer/portainer/bolt"
-	"github.com/portainer/portainer/cli"
-	"github.com/portainer/portainer/cron"
-	"github.com/portainer/portainer/crypto"
-	"github.com/portainer/portainer/docker"
-	"github.com/portainer/portainer/exec"
-	"github.com/portainer/portainer/filesystem"
-	"github.com/portainer/portainer/git"
-	"github.com/portainer/portainer/http"
-	"github.com/portainer/portainer/http/client"
-	"github.com/portainer/portainer/jwt"
-	"github.com/portainer/portainer/ldap"
-	"github.com/portainer/portainer/libcompose"
+	"github.com/portainer/portainer/api"
+	"github.com/portainer/portainer/api/bolt"
+	"github.com/portainer/portainer/api/cli"
+	"github.com/portainer/portainer/api/cron"
+	"github.com/portainer/portainer/api/crypto"
+	"github.com/portainer/portainer/api/docker"
+	"github.com/portainer/portainer/api/exec"
+	"github.com/portainer/portainer/api/filesystem"
+	"github.com/portainer/portainer/api/git"
+	"github.com/portainer/portainer/api/http"
+	"github.com/portainer/portainer/api/http/client"
+	"github.com/portainer/portainer/api/jwt"
+	"github.com/portainer/portainer/api/ldap"
+	"github.com/portainer/portainer/api/libcompose"
 
 	"log"
 )
@@ -175,7 +175,7 @@ func loadEndpointSyncSystemSchedule(jobScheduler portainer.JobScheduler, schedul
 
 	endpointSyncJob := &portainer.EndpointSyncJob{}
 
-	endointSyncSchedule := &portainer.Schedule{
+	endpointSyncSchedule := &portainer.Schedule{
 		ID:              portainer.ScheduleID(scheduleService.GetNextIdentifier()),
 		Name:            "system_endpointsync",
 		CronExpression:  "@every " + *flags.SyncInterval,
@@ -186,14 +186,14 @@ func loadEndpointSyncSystemSchedule(jobScheduler portainer.JobScheduler, schedul
 	}
 
 	endpointSyncJobContext := cron.NewEndpointSyncJobContext(endpointService, *flags.ExternalEndpoints)
-	endpointSyncJobRunner := cron.NewEndpointSyncJobRunner(endointSyncSchedule, endpointSyncJobContext)
+	endpointSyncJobRunner := cron.NewEndpointSyncJobRunner(endpointSyncSchedule, endpointSyncJobContext)
 
 	err = jobScheduler.ScheduleJob(endpointSyncJobRunner)
 	if err != nil {
 		return err
 	}
 
-	return scheduleService.CreateSchedule(endointSyncSchedule)
+	return scheduleService.CreateSchedule(endpointSyncSchedule)
 }
 
 func loadSchedulesFromDatabase(jobScheduler portainer.JobScheduler, jobService portainer.JobService, scheduleService portainer.ScheduleService, endpointService portainer.EndpointService, fileService portainer.FileService) error {
@@ -260,6 +260,7 @@ func initSettings(settingsService portainer.SettingsService, flags *portainer.CL
 					portainer.LDAPGroupSearchSettings{},
 				},
 			},
+			OAuthSettings:                      portainer.OAuthSettings{},
 			AllowBindMountsForRegularUsers:     true,
 			AllowPrivilegedModeForRegularUsers: true,
 			EnableHostManagementFeatures:       false,
@@ -486,7 +487,10 @@ func initExtensionManager(fileService portainer.FileService, extensionService po
 	for _, extension := range extensions {
 		err := extensionManager.EnableExtension(&extension, extension.License.LicenseKey)
 		if err != nil {
-			return nil, err
+			log.Printf("Unable to enable extension: %s [extension: %s]", err.Error(), extension.Name)
+			extension.Enabled = false
+			extension.License.Valid = false
+			extensionService.Persist(&extension)
 		}
 	}
 

@@ -1,6 +1,6 @@
 package security
 
-import "github.com/portainer/portainer"
+import "github.com/portainer/portainer/api"
 
 // FilterUserTeams filters teams based on user role.
 // non-administrator users only have access to team they are member of.
@@ -124,7 +124,7 @@ func FilterEndpointGroups(endpointGroups []portainer.EndpointGroup, context *Res
 		filteredEndpointGroups = make([]portainer.EndpointGroup, 0)
 
 		for _, group := range endpointGroups {
-			if AuthorizedEndpointGroupAccess(&group, context.UserID, context.UserMemberships) {
+			if authorizedEndpointGroupAccess(&group, context.UserID, context.UserMemberships) {
 				filteredEndpointGroups = append(filteredEndpointGroups, group)
 			}
 		}

@@ -1,3 +1,5 @@
+import { EndpointSecurityFormData } from '../../../components/endpointSecurity/porEndpointSecurityModel';
+
 angular.module('portainer.app')
 .controller('CreateEndpointController', ['$q', '$scope', '$state', '$filter', 'clipboard', 'EndpointService', 'GroupService', 'TagService', 'Notifications',
 function ($q, $scope, $state, $filter, clipboard, EndpointService, GroupService, TagService, Notifications) {
@@ -20,7 +22,7 @@ function ($q, $scope, $state, $filter, clipboard, EndpointService, GroupService,
   };
 
   $scope.copyAgentCommand = function() {
-    clipboard.copyText('curl -L https://portainer.io/download/agent-stack.yml -o agent-stack.yml && docker stack deploy --compose-file=agent-stack.yml portainer-agent');
+    clipboard.copyText('curl -L https://downloads.portainer.io/agent-stack.yml -o agent-stack.yml && docker stack deploy --compose-file=agent-stack.yml portainer-agent');
     $('#copyNotification').show();
     $('#copyNotification').fadeOut(2000);
   };

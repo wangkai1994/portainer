@@ -1,3 +1,5 @@
+import _ from 'lodash-es';
+
 angular.module('portainer.app')
 .factory('EndpointProvider', ['LocalStorage', function EndpointProviderFactory(LocalStorage) {
   'use strict';
@@ -62,10 +64,6 @@ angular.module('portainer.app')
 
   service.offlineMode = function() {
     return endpoint.OfflineMode;
-  };
-
-  service.endpointStatusFromOfflineMode = function(isOffline) {
-    return isOffline ? 2 : 1;
   };
 
   service.setOfflineMode = function(isOffline) {

@@ -1,3 +1,7 @@
+import toastr from 'toastr';
+import { Terminal } from 'xterm';
+import * as fit from 'xterm/lib/addons/fit/fit';
+
 angular.module('portainer')
   .config(['$urlRouterProvider', '$httpProvider', 'localStorageServiceProvider', 'jwtOptionsProvider', 'AnalyticsProvider', '$uibTooltipProvider', '$compileProvider', 'cfpLoadingBarProvider',
   function ($urlRouterProvider, $httpProvider, localStorageServiceProvider, jwtOptionsProvider, AnalyticsProvider, $uibTooltipProvider, $compileProvider, cfpLoadingBarProvider) {
@@ -27,6 +31,9 @@ angular.module('portainer')
         request: function(config) {
           if (config.url.indexOf('/docker/') > -1) {
             config.headers['X-PortainerAgent-Target'] = HttpRequestHelper.portainerAgentTargetHeader();
+            if (HttpRequestHelper.portainerAgentManagerOperation()) {
+              config.headers['X-PortainerAgent-ManagerOperation'] = '1';
+            }
           }
           return config;
         }
